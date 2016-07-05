@@ -26,7 +26,7 @@ $ git clone https://github.com/tcoulter/dao-truffle.git
 $ cd dao-truffle
 ```
 
-### Usage Example: Interacting with the DarkDAO.
+### Usage Example: Interacting with the DarkDAO
 
 You can now use this project as if it were any other Truffle project. However, there's one use case I'd like to highlight, which is interacting with the DarkDAO.
 
