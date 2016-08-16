@@ -1,4 +1,5 @@
 import "DAO.sol";
+import "DAO_CreatorInterface.sol";
 
 contract DAO_Creator {
     function createDAO(
@@ -10,7 +11,7 @@ contract DAO_Creator {
 
         return new DAO(
             _curator,
-            DAO_Creator(this),
+            DAO_CreatorInterface(this),
             _proposalDeposit,
             _minTokensToCreate,
             _closingTime,

@@ -16,7 +16,8 @@ along with the DAO.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 import "ManagedAccount.sol";
-import "DAO_Creator.sol";
+import "DAO_CreatorInterface.sol";
+import "TokenCreationInterface.sol";
 
 /*
 Standard smart contract for a Decentralized Autonomous Organization (DAO)
@@ -24,7 +25,7 @@ to automate organizational governance and decision-making.
 */
 
 
-contract DAOInterface {
+contract DAOInterface is TokenCreationInterface {
 
     // The amount of days for which people who try to participate in the
     // creation by calling the fallback function will still get their ether back
@@ -91,7 +92,7 @@ contract DAOInterface {
 
     // Contract that is able to create a new DAO (with the same code as
     // this one), used for splits
-    DAO_Creator public daoCreator;
+    DAO_CreatorInterface public daoCreator;
 
     // A proposal with `newCurator == false` represents a transaction
     // to be issued by this DAO
@@ -142,7 +143,7 @@ contract DAOInterface {
         // Amount of Reward Tokens owned by the DAO at the time of split.
         uint rewardToken;
         // The new DAO contract created at the time of split.
-        DAO newDAO;
+        DAOInterface newDAO;
     }
 
     // Used to restrict access to certain functions to only DAO Token Holders

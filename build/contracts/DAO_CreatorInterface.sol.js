@@ -206,13 +206,13 @@ var Web3 = require("web3");
 
   Contract.new = function() {
     if (this.currentProvider == null) {
-      throw new Error("ManagedAccountInterface error: Please call setProvider() first before calling new().");
+      throw new Error("DAO_CreatorInterface error: Please call setProvider() first before calling new().");
     }
 
     var args = Array.prototype.slice.call(arguments);
 
     if (!this.unlinked_binary) {
-      throw new Error("ManagedAccountInterface error: contract binary not set. Can't deploy new instance.");
+      throw new Error("DAO_CreatorInterface error: contract binary not set. Can't deploy new instance.");
     }
 
     var regex = /__[^_]+_+/g;
@@ -231,7 +231,7 @@ var Web3 = require("web3");
         return name != arr[index + 1];
       }).join(", ");
 
-      throw new Error("ManagedAccountInterface contains unresolved libraries. You must deploy and link the following libraries before you can deploy a new version of ManagedAccountInterface: " + unlinked_libraries);
+      throw new Error("DAO_CreatorInterface contains unresolved libraries. You must deploy and link the following libraries before you can deploy a new version of DAO_CreatorInterface: " + unlinked_libraries);
     }
 
     var self = this;
@@ -272,7 +272,7 @@ var Web3 = require("web3");
 
   Contract.at = function(address) {
     if (address == null || typeof address != "string" || address.length != 42) {
-      throw new Error("Invalid address passed to ManagedAccountInterface.at(): " + address);
+      throw new Error("Invalid address passed to DAO_CreatorInterface.at(): " + address);
     }
 
     var contract_class = this.web3.eth.contract(this.abi);
@@ -283,7 +283,7 @@ var Web3 = require("web3");
 
   Contract.deployed = function() {
     if (!this.address) {
-      throw new Error("Cannot find deployed address: ManagedAccountInterface not deployed or address not set.");
+      throw new Error("Cannot find deployed address: DAO_CreatorInterface not deployed or address not set.");
     }
 
     return this.at(this.address);
@@ -328,78 +328,33 @@ var Web3 = require("web3");
         "constant": false,
         "inputs": [
           {
-            "name": "_recipient",
+            "name": "_curator",
             "type": "address"
           },
           {
-            "name": "_amount",
+            "name": "_proposalDeposit",
             "type": "uint256"
-          }
-        ],
-        "name": "payOut",
-        "outputs": [
-          {
-            "name": "",
-            "type": "bool"
-          }
-        ],
-        "type": "function"
-      },
-      {
-        "constant": true,
-        "inputs": [],
-        "name": "payOwnerOnly",
-        "outputs": [
-          {
-            "name": "",
-            "type": "bool"
-          }
-        ],
-        "type": "function"
-      },
-      {
-        "constant": true,
-        "inputs": [],
-        "name": "owner",
-        "outputs": [
-          {
-            "name": "",
-            "type": "address"
-          }
-        ],
-        "type": "function"
-      },
-      {
-        "constant": true,
-        "inputs": [],
-        "name": "accumulatedInput",
-        "outputs": [
-          {
-            "name": "",
-            "type": "uint256"
-          }
-        ],
-        "type": "function"
-      },
-      {
-        "anonymous": false,
-        "inputs": [
-          {
-            "indexed": true,
-            "name": "_recipient",
-            "type": "address"
           },
           {
-            "indexed": false,
-            "name": "_amount",
+            "name": "_minTokensToCreate",
+            "type": "uint256"
+          },
+          {
+            "name": "_closingTime",
             "type": "uint256"
           }
         ],
-        "name": "PayOut",
-        "type": "event"
+        "name": "createDAO",
+        "outputs": [
+          {
+            "name": "_newDAO",
+            "type": "address"
+          }
+        ],
+        "type": "function"
       }
     ],
-    "updated_at": 1471380606720,
+    "updated_at": 1471380606714,
     "links": {}
   }
 };
@@ -466,7 +421,7 @@ var Web3 = require("web3");
     Contract.links[name] = address;
   };
 
-  Contract.contract_name   = Contract.prototype.contract_name   = "ManagedAccountInterface";
+  Contract.contract_name   = Contract.prototype.contract_name   = "DAO_CreatorInterface";
   Contract.generated_with  = Contract.prototype.generated_with  = "3.1.2";
 
   var properties = {
@@ -503,6 +458,6 @@ var Web3 = require("web3");
   } else {
     // There will only be one version of this contract in the browser,
     // and we can use that.
-    window.ManagedAccountInterface = Contract;
+    window.DAO_CreatorInterface = Contract;
   }
 })();

@@ -1,0 +1,29 @@
+{
+  "name": "truffle-dao",
+  "version": "1.0.0",
+  "description": "Vulderable DAO implementation in Truffle, using TestRPC to expose the exploit.",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tcoulter/dao-truffle.git"
+  },
+  "author": "Tim Coulter <tim@timothyjcoulter.com> (http://timothyjcoulter.com)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/tcoulter/dao-truffle/issues"
+  },
+  "homepage": "https://github.com/tcoulter/dao-truffle#readme",
+  "dependencies": {
+    "async": "^2.0.1",
+    "ethereumjs-testrpc": "^2.1.0",
+    "moment": "^2.14.1",
+    "truffle": "^2.0.7",
+    "web3": "^0.16.0"
+  }
+}

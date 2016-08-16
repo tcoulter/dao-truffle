@@ -1,35 +1,4 @@
 /*
-
-- Bytecode Verification performed was compared on second iteration -
-
-This file is part of the DAO.
-
-The DAO is free software: you can redistribute it and/or modify
-it under the terms of the GNU lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The DAO is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU lesser General Public License for more details.
-
-You should have received a copy of the GNU lesser General Public License
-along with the DAO.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
-
-
-
-
-
-
-
-
-
-
-
-/*
 This file is part of the DAO.
 
 The DAO is free software: you can redistribute it and/or modify
@@ -50,6 +19,7 @@ along with the DAO.  If not, see <http://www.gnu.org/licenses/>.
 import "DAOInterface.sol";
 import "Token.sol";
 import "TokenCreation.sol";
+import "DAO_CreatorInterface.sol";
 
 
 // The DAO contract itself
@@ -63,7 +33,7 @@ contract DAO is DAOInterface, Token, TokenCreation {
 
     function DAO(
         address _curator,
-        DAO_Creator _daoCreator,
+        DAO_CreatorInterface _daoCreator,
         uint _proposalDeposit,
         uint _minTokensToCreate,
         uint _closingTime,
@@ -555,7 +525,7 @@ contract DAO is DAOInterface, Token, TokenCreation {
 
     function createNewDAO(address _newCurator) internal returns (DAO _newDAO) {
         NewCurator(_newCurator);
-        return daoCreator.createDAO(_newCurator, 0, 0, now + splitExecutionPeriod);
+        return DAO(daoCreator.createDAO(_newCurator, 0, 0, now + splitExecutionPeriod));
     }
 
     function numberOfProposals() constant returns (uint _numberOfProposals) {

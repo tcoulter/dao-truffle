@@ -113,8 +113,6 @@ var Web3 = require("web3");
                   return reject(new Error("Transaction " + tx + " wasn't processed in " + (timeout / 1000) + " seconds!"));
                 }
 
-                attempts += 1;
-
                 setTimeout(make_attempt, 1000);
               });
             };
@@ -156,6 +154,7 @@ var Web3 = require("web3");
 
     instance.allEvents = contract.allEvents;
     instance.address = contract.address;
+    instance.transactionHash = contract.transactionHash;
   };
 
   // Use inheritance to create a clone of this contract,
@@ -212,7 +211,7 @@ var Web3 = require("web3");
 
     var args = Array.prototype.slice.call(arguments);
 
-    if (!this.binary) {
+    if (!this.unlinked_binary) {
       throw new Error("TokenCreationInterface error: contract binary not set. Can't deploy new instance.");
     }
 
@@ -468,7 +467,8 @@ var Web3 = require("web3");
         "type": "event"
       }
     ],
-    "updated_at": 1467656954060
+    "updated_at": 1471380606751,
+    "links": {}
   }
 };
 
@@ -510,14 +510,10 @@ var Web3 = require("web3");
     var network = this.all_networks[network_id] || {};
 
     this.abi             = this.prototype.abi             = network.abi;
-    this.binary          = this.prototype.binary          = network.binary;
     this.unlinked_binary = this.prototype.unlinked_binary = network.unlinked_binary;
     this.address         = this.prototype.address         = network.address;
     this.updated_at      = this.prototype.updated_at      = network.updated_at;
-
-    if (this.unlinked_binary == null || this.unlinked_binary == "") {
-      this.unlinked_binary = this.prototype.unlinked_binary = this.binary;
-    }
+    this.links           = this.prototype.links           = network.links || {};
 
     this.network_id = network_id;
   };
@@ -526,8 +522,47 @@ var Web3 = require("web3");
     return Object.keys(this.all_networks);
   };
 
+  Contract.link = function(name, address) {
+    if (typeof name == "object") {
+      Object.keys(name).forEach(function(n) {
+        var a = name[n];
+        Contract.link(n, a);
+      });
+      return;
+    }
+
+    Contract.links[name] = address;
+  };
+
   Contract.contract_name   = Contract.prototype.contract_name   = "TokenCreationInterface";
-  Contract.generated_with  = Contract.prototype.generated_with  = "3.0.3";
+  Contract.generated_with  = Contract.prototype.generated_with  = "3.1.2";
+
+  var properties = {
+    binary: function() {
+      var binary = Contract.unlinked_binary;
+
+      Object.keys(Contract.links).forEach(function(library_name) {
+        var library_address = Contract.links[library_name];
+        var regex = new RegExp("__" + library_name + "_*", "g");
+
+        binary = binary.replace(regex, library_address.replace("0x", ""));
+      });
+
+      return binary;
+    }
+  };
+
+  Object.keys(properties).forEach(function(key) {
+    var getter = properties[key];
+
+    var definition = {};
+    definition.enumerable = true;
+    definition.configurable = false;
+    definition.get = getter;
+
+    Object.defineProperty(Contract, key, definition);
+    Object.defineProperty(Contract.prototype, key, definition);
+  });
 
   bootstrap(Contract);
 

@@ -113,8 +113,6 @@ var Web3 = require("web3");
                   return reject(new Error("Transaction " + tx + " wasn't processed in " + (timeout / 1000) + " seconds!"));
                 }
 
-                attempts += 1;
-
                 setTimeout(make_attempt, 1000);
               });
             };
@@ -156,6 +154,7 @@ var Web3 = require("web3");
 
     instance.allEvents = contract.allEvents;
     instance.address = contract.address;
+    instance.transactionHash = contract.transactionHash;
   };
 
   // Use inheritance to create a clone of this contract,
@@ -212,7 +211,7 @@ var Web3 = require("web3");
 
     var args = Array.prototype.slice.call(arguments);
 
-    if (!this.binary) {
+    if (!this.unlinked_binary) {
       throw new Error("ManagedAccount error: contract binary not set. Can't deploy new instance.");
     }
 
@@ -413,9 +412,9 @@ var Web3 = require("web3");
         "type": "event"
       }
     ],
-    "binary": "60606040818152806101be833960a090525160805160008054600160a060020a03191690921760a060020a60ff0219167401000000000000000000000000000000000000000090910217815561016490819061005a90396000f3606060405236156100405760e060020a60003504630221038a811461004d57806318bdc79a146100aa5780638da5cb5b146100be578063d2cc718f146100d0575b6100d96001805434019055565b6100db6004356024356000805433600160a060020a0390811691161415806100755750600034115b806100a05750805460a060020a900460ff1680156100a057508054600160a060020a03848116911614155b156100f957610002565b6100db60005460ff60a060020a9091041681565b6100ef600054600160a060020a031681565b6100ef60015481565b005b604080519115158252519081900360200190f35b6060908152602090f35b600160a060020a0383168260608381818185876185025a03f1925050501561015e57604080518381529051600160a060020a038516917f9735b0cb909f3d21d5c16bbcccd272d85fa11446f6d679f6ecb170d2dabfecfc919081900360200190a25060015b9291505056",
-    "unlinked_binary": "60606040818152806101be833960a090525160805160008054600160a060020a03191690921760a060020a60ff0219167401000000000000000000000000000000000000000090910217815561016490819061005a90396000f3606060405236156100405760e060020a60003504630221038a811461004d57806318bdc79a146100aa5780638da5cb5b146100be578063d2cc718f146100d0575b6100d96001805434019055565b6100db6004356024356000805433600160a060020a0390811691161415806100755750600034115b806100a05750805460a060020a900460ff1680156100a057508054600160a060020a03848116911614155b156100f957610002565b6100db60005460ff60a060020a9091041681565b6100ef600054600160a060020a031681565b6100ef60015481565b005b604080519115158252519081900360200190f35b6060908152602090f35b600160a060020a0383168260608381818185876185025a03f1925050501561015e57604080518381529051600160a060020a038516917f9735b0cb909f3d21d5c16bbcccd272d85fa11446f6d679f6ecb170d2dabfecfc919081900360200190a25060015b9291505056",
-    "updated_at": 1467656954059
+    "unlinked_binary": "0x60606040818152806101be833960a090525160805160008054600160a060020a03191690921760a060020a60ff0219167401000000000000000000000000000000000000000090910217815561016490819061005a90396000f3606060405236156100405760e060020a60003504630221038a811461004d57806318bdc79a146100aa5780638da5cb5b146100be578063d2cc718f146100d0575b6100d96001805434019055565b6100db6004356024356000805433600160a060020a0390811691161415806100755750600034115b806100a05750805460a060020a900460ff1680156100a057508054600160a060020a03848116911614155b156100f957610002565b6100db60005460ff60a060020a9091041681565b6100ef600054600160a060020a031681565b6100ef60015481565b005b604080519115158252519081900360200190f35b6060908152602090f35b600160a060020a0383168260608381818185876185025a03f1925050501561015e57604080518381529051600160a060020a038516917f9735b0cb909f3d21d5c16bbcccd272d85fa11446f6d679f6ecb170d2dabfecfc919081900360200190a25060015b9291505056",
+    "updated_at": 1471380606717,
+    "links": {}
   }
 };
 
@@ -457,14 +456,10 @@ var Web3 = require("web3");
     var network = this.all_networks[network_id] || {};
 
     this.abi             = this.prototype.abi             = network.abi;
-    this.binary          = this.prototype.binary          = network.binary;
     this.unlinked_binary = this.prototype.unlinked_binary = network.unlinked_binary;
     this.address         = this.prototype.address         = network.address;
     this.updated_at      = this.prototype.updated_at      = network.updated_at;
-
-    if (this.unlinked_binary == null || this.unlinked_binary == "") {
-      this.unlinked_binary = this.prototype.unlinked_binary = this.binary;
-    }
+    this.links           = this.prototype.links           = network.links || {};
 
     this.network_id = network_id;
   };
@@ -473,8 +468,47 @@ var Web3 = require("web3");
     return Object.keys(this.all_networks);
   };
 
+  Contract.link = function(name, address) {
+    if (typeof name == "object") {
+      Object.keys(name).forEach(function(n) {
+        var a = name[n];
+        Contract.link(n, a);
+      });
+      return;
+    }
+
+    Contract.links[name] = address;
+  };
+
   Contract.contract_name   = Contract.prototype.contract_name   = "ManagedAccount";
-  Contract.generated_with  = Contract.prototype.generated_with  = "3.0.3";
+  Contract.generated_with  = Contract.prototype.generated_with  = "3.1.2";
+
+  var properties = {
+    binary: function() {
+      var binary = Contract.unlinked_binary;
+
+      Object.keys(Contract.links).forEach(function(library_name) {
+        var library_address = Contract.links[library_name];
+        var regex = new RegExp("__" + library_name + "_*", "g");
+
+        binary = binary.replace(regex, library_address.replace("0x", ""));
+      });
+
+      return binary;
+    }
+  };
+
+  Object.keys(properties).forEach(function(key) {
+    var getter = properties[key];
+
+    var definition = {};
+    definition.enumerable = true;
+    definition.configurable = false;
+    definition.get = getter;
+
+    Object.defineProperty(Contract, key, definition);
+    Object.defineProperty(Contract.prototype, key, definition);
+  });
 
   bootstrap(Contract);
 
