@@ -1289,7 +1289,7 @@ var Web3 = require("web3");
         "type": "event"
       }
     ],
-    "updated_at": 1471499523841,
+    "updated_at": 1471534350192,
     "links": {}
   }
 };

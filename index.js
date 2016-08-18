@@ -9,6 +9,8 @@ var align = require("./aligner.js");
 var DAOContract = require("./build/contracts/DAO.sol.js");
 var HackContract = require("./build/contracts/Hack.sol.js");
 
+console.log("Forking from block 1599207...");
+
 var web3 = new Web3(TestRPC.provider({
   fallback: "http://localhost:8545",
   fallback_block_number: 1599207,
@@ -31,7 +33,7 @@ web3.eth.getAccounts(function(err, accounts) {
 
   var DAO = DAOContract.at("0xbb9bc244d798123fde783fcc1c72d3bb8c189413");
   var Hack;
-  var vaultAddress;
+  var proxyAddress;
   var NewDarkDAO;
 
   var rewardAccountAddress = "0xd2e16a20dd7b1ae54fb0312209784478d069c7b0";
@@ -96,9 +98,9 @@ web3.eth.getAccounts(function(err, accounts) {
     console.log("Deploying hack contract...");
     HackContract.new(DAO.address).then(function(hack) {
       Hack = hack;
-      return Hack.vault();
+      return Hack.proxy();
     }).then(function(v) {
-      vaultAddress = v;
+      proxyAddress = v;
       callback();
     }).catch(callback)
   }
@@ -134,7 +136,7 @@ web3.eth.getAccounts(function(err, accounts) {
       accountETH: web3.eth.getBalance.bind(web3.eth, accounts[0]),
       accountDAO: getDAOBalance.bind(null, DAO.address, accounts[0]),
       hackDAO: getDAOBalance.bind(null, DAO.address, Hack.address),
-      vaultDAO: getDAOBalance.bind(null, DAO.address, vaultAddress),
+      proxyDAO: getDAOBalance.bind(null, DAO.address, proxyAddress),
       DAOSupply: getTotalSupply.bind(null, DAO.address),
       darkDAOSupply: getTotalSupply.bind(null, NewDarkDAOAddress),
       hackDarkDAO: getDAOBalance.bind(null, NewDarkDAOAddress, Hack.address),
@@ -148,7 +150,7 @@ web3.eth.getAccounts(function(err, accounts) {
       var accountETH    = web3.fromWei(balances.accountETH).toFixed(2);
       var accountDAO    = humanizeDAOBalance(balances.accountDAO);
       var hackDAO       = humanizeDAOBalance(balances.hackDAO);
-      var vaultDAO      = humanizeDAOBalance(balances.vaultDAO);
+      var proxyDAO      = humanizeDAOBalance(balances.proxyDAO);
       var DAOSupply     = humanizeDAOBalance(balances.DAOSupply);
       var darkDAOSupply = humanizeDAOBalance(balances.darkDAOSupply);
       var DAOETH        = web3.fromWei(balances.DAOETH).toFixed(2);
@@ -158,7 +160,7 @@ web3.eth.getAccounts(function(err, accounts) {
       align({
         "  Account": accountDAO + " DAO",
         "  Hack Contract": hackDAO + " DAO",
-        "  Vault Contract": vaultDAO + " DAO",
+        "  Proxy Contract": proxyDAO + " DAO",
         "  DAO Total Supply": DAOSupply + " DAO",
         "  Dark DAO Total Supply": darkDAOSupply + " DAO",
         "  DAO ETH": DAOETH + " ETH",

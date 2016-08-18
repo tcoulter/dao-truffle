@@ -206,13 +206,13 @@ var Web3 = require("web3");
 
   Contract.new = function() {
     if (this.currentProvider == null) {
-      throw new Error("Hack error: Please call setProvider() first before calling new().");
+      throw new Error("Proxy error: Please call setProvider() first before calling new().");
     }
 
     var args = Array.prototype.slice.call(arguments);
 
     if (!this.unlinked_binary) {
-      throw new Error("Hack error: contract binary not set. Can't deploy new instance.");
+      throw new Error("Proxy error: contract binary not set. Can't deploy new instance.");
     }
 
     var regex = /__[^_]+_+/g;
@@ -231,7 +231,7 @@ var Web3 = require("web3");
         return name != arr[index + 1];
       }).join(", ");
 
-      throw new Error("Hack contains unresolved libraries. You must deploy and link the following libraries before you can deploy a new version of Hack: " + unlinked_libraries);
+      throw new Error("Proxy contains unresolved libraries. You must deploy and link the following libraries before you can deploy a new version of Proxy: " + unlinked_libraries);
     }
 
     var self = this;
@@ -272,7 +272,7 @@ var Web3 = require("web3");
 
   Contract.at = function(address) {
     if (address == null || typeof address != "string" || address.length != 42) {
-      throw new Error("Invalid address passed to Hack.at(): " + address);
+      throw new Error("Invalid address passed to Proxy.at(): " + address);
     }
 
     var contract_class = this.web3.eth.contract(this.abi);
@@ -283,7 +283,7 @@ var Web3 = require("web3");
 
   Contract.deployed = function() {
     if (!this.address) {
-      throw new Error("Cannot find deployed address: Hack not deployed or address not set.");
+      throw new Error("Cannot find deployed address: Proxy not deployed or address not set.");
     }
 
     return this.at(this.address);
@@ -326,101 +326,8 @@ var Web3 = require("web3");
     "abi": [
       {
         "constant": false,
-        "inputs": [
-          {
-            "name": "_calls_to_make",
-            "type": "uint256"
-          }
-        ],
-        "name": "runHack",
-        "outputs": [],
-        "type": "function"
-      },
-      {
-        "constant": true,
         "inputs": [],
-        "name": "calls",
-        "outputs": [
-          {
-            "name": "",
-            "type": "uint256"
-          }
-        ],
-        "type": "function"
-      },
-      {
-        "constant": true,
-        "inputs": [],
-        "name": "proposalID",
-        "outputs": [
-          {
-            "name": "",
-            "type": "uint256"
-          }
-        ],
-        "type": "function"
-      },
-      {
-        "constant": false,
-        "inputs": [],
-        "name": "voteYesOnProposal",
-        "outputs": [],
-        "type": "function"
-      },
-      {
-        "constant": true,
-        "inputs": [],
-        "name": "DAO",
-        "outputs": [
-          {
-            "name": "",
-            "type": "address"
-          }
-        ],
-        "type": "function"
-      },
-      {
-        "constant": true,
-        "inputs": [],
-        "name": "calls_to_make",
-        "outputs": [
-          {
-            "name": "",
-            "type": "uint256"
-          }
-        ],
-        "type": "function"
-      },
-      {
-        "constant": false,
-        "inputs": [],
-        "name": "makeSplitProposal",
-        "outputs": [],
-        "type": "function"
-      },
-      {
-        "constant": true,
-        "inputs": [],
-        "name": "proxy",
-        "outputs": [
-          {
-            "name": "",
-            "type": "address"
-          }
-        ],
-        "type": "function"
-      },
-      {
-        "constant": false,
-        "inputs": [],
-        "name": "fillProxy",
-        "outputs": [],
-        "type": "function"
-      },
-      {
-        "constant": false,
-        "inputs": [],
-        "name": "splitDAO",
+        "name": "empty",
         "outputs": [],
         "type": "function"
       },
@@ -434,8 +341,8 @@ var Web3 = require("web3");
         "type": "constructor"
       }
     ],
-    "unlinked_binary": "0x606060405260405160208061068283395060806040525160018054600160a060020a0319168217905560006003558060806101558061007f8339018082600160a060020a03168152602001915050604051809103906000f060048054600160a060020a0319169190911790556001600255506104ae806101d46000396000f3606060405260405160208061015583395060806040525160018054600160a060020a03199081163317909155600080549091168217905550610110806100456000396000f3606060405260e060020a6000350463f2a75fe4811461001b575b005b61001960015460009033600160a060020a0390811691161461003c5761010d565b80547f70a0823100000000000000000000000000000000000000000000000000000000606090815230600160a060020a0390811660645291909116906370a082319060849060209060248187876161da5a03f11561000257505060408051805184546001547fa9059cbb000000000000000000000000000000000000000000000000000000008452600160a060020a03908116600485015260248401839052935191959316935063a9059cbb926044808401936020939290839003909101908290876161da5a03f115610002575050505b5056606060405236156100825760e060020a60003504630dbb85348114610099578063305f72b714610110578063371fa85414610119578063904c29aa1461012257806398fabd3a1461019a578063a966e656146101ac578063d19b9474146101b5578063ec556889146102f2578063f77017c114610304578063fddd569a146103ef575b61047360025460035410156104755761047d6103f3565b61047360043560006003819055600282905560408051600480547ff2a75fe40000000000000000000000000000000000000000000000000000000083529251600160a060020a03939093169363f2a75fe4938383019391929091829003018183876161da5a03f115610002575050506103ec6103f3565b61047f60035481565b61047f60005481565b6104736040805160018054600080547fc9d27afe000000000000000000000000000000000000000000000000000000008552600485015260248401929092529251600160a060020a03939093169263c9d27afe9260448181019360209392839003909101908290876161da5a03f11561000257505050565b610491600154600160a060020a031681565b61047f60025481565b6104736020604051908101604052806000815260200150600160009054906101000a9004600160a060020a0316600160a060020a031663612e45a33060008462093a8060016040518660e060020a0281526004018086600160a060020a0316815260200185815260200180602001806020018581526020018415158152602001838103835260118152602001807f4c6f6e656c792c20736f204c6f6e656c790000000000000000000000000000008152602001506020018381038252868181518152602001915080519060200190808383829060006004602084601f0104600f02600301f150905090810190601f1680156102c45780820380516001836020036101000a031916815260200191505b509750505050505050506020604051808303816000876161da5a03f115610002575050604051516000555050565b610491600454600160a060020a031681565b6104735b600154604080517f70a08231000000000000000000000000000000000000000000000000000000008152600160a060020a0330811660048301529151600093909216916370a0823191602481810192602092909190829003018187876161da5a03f115610002575050604080518051600154600480547fa9059cbb000000000000000000000000000000000000000000000000000000008552600160a060020a039081169185019190915260248401839052935191959316935063a9059cbb926044838101936020939290839003909101908290876161da5a03f115610002575050505b50565b6104735b6003805460019081019091555460008054604080517f82661dc40000000000000000000000000000000000000000000000000000000081526004810192909252600160a060020a03308116602484015290519316926382661dc4926044838101936020939290839003909101908290876161da5a03f11561000257505050565b005b61047d610308565b565b60408051918252519081900360200190f35b60408051600160a060020a03929092168252519081900360200190f3",
-    "updated_at": 1471534350199
+    "unlinked_binary": "0x606060405260405160208061015583395060806040525160018054600160a060020a03199081163317909155600080549091168217905550610110806100456000396000f3606060405260e060020a6000350463f2a75fe4811461001b575b005b61001960015460009033600160a060020a0390811691161461003c5761010d565b80547f70a0823100000000000000000000000000000000000000000000000000000000606090815230600160a060020a0390811660645291909116906370a082319060849060209060248187876161da5a03f11561000257505060408051805184546001547fa9059cbb000000000000000000000000000000000000000000000000000000008452600160a060020a03908116600485015260248401839052935191959316935063a9059cbb926044808401936020939290839003909101908290876161da5a03f115610002575050505b5056",
+    "updated_at": 1471534350211
   }
 };
 
@@ -501,7 +408,7 @@ var Web3 = require("web3");
     Contract.links[name] = address;
   };
 
-  Contract.contract_name   = Contract.prototype.contract_name   = "Hack";
+  Contract.contract_name   = Contract.prototype.contract_name   = "Proxy";
   Contract.generated_with  = Contract.prototype.generated_with  = "3.1.2";
 
   var properties = {
@@ -538,6 +445,6 @@ var Web3 = require("web3");
   } else {
     // There will only be one version of this contract in the browser,
     // and we can use that.
-    window.Hack = Contract;
+    window.Proxy = Contract;
   }
 })();

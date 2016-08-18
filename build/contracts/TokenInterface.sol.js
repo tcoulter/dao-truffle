@@ -486,7 +486,7 @@ var Web3 = require("web3");
         "type": "event"
       }
     ],
-    "updated_at": 1471499523860,
+    "updated_at": 1471534350211,
     "links": {}
   }
 };

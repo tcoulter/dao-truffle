@@ -354,7 +354,7 @@ var Web3 = require("web3");
         "type": "function"
       }
     ],
-    "updated_at": 1471499523845,
+    "updated_at": 1471534350197,
     "links": {}
   }
 };
