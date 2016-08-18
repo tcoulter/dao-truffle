@@ -206,13 +206,13 @@ var Web3 = require("web3");
 
   Contract.new = function() {
     if (this.currentProvider == null) {
-      throw new Error("ManagedAccount error: Please call setProvider() first before calling new().");
+      throw new Error("Vault error: Please call setProvider() first before calling new().");
     }
 
     var args = Array.prototype.slice.call(arguments);
 
     if (!this.unlinked_binary) {
-      throw new Error("ManagedAccount error: contract binary not set. Can't deploy new instance.");
+      throw new Error("Vault error: contract binary not set. Can't deploy new instance.");
     }
 
     var regex = /__[^_]+_+/g;
@@ -231,7 +231,7 @@ var Web3 = require("web3");
         return name != arr[index + 1];
       }).join(", ");
 
-      throw new Error("ManagedAccount contains unresolved libraries. You must deploy and link the following libraries before you can deploy a new version of ManagedAccount: " + unlinked_libraries);
+      throw new Error("Vault contains unresolved libraries. You must deploy and link the following libraries before you can deploy a new version of Vault: " + unlinked_libraries);
     }
 
     var self = this;
@@ -272,7 +272,7 @@ var Web3 = require("web3");
 
   Contract.at = function(address) {
     if (address == null || typeof address != "string" || address.length != 42) {
-      throw new Error("Invalid address passed to ManagedAccount.at(): " + address);
+      throw new Error("Invalid address passed to Vault.at(): " + address);
     }
 
     var contract_class = this.web3.eth.contract(this.abi);
@@ -283,7 +283,7 @@ var Web3 = require("web3");
 
   Contract.deployed = function() {
     if (!this.address) {
-      throw new Error("Cannot find deployed address: ManagedAccount not deployed or address not set.");
+      throw new Error("Cannot find deployed address: Vault not deployed or address not set.");
     }
 
     return this.at(this.address);
@@ -326,95 +326,23 @@ var Web3 = require("web3");
     "abi": [
       {
         "constant": false,
-        "inputs": [
-          {
-            "name": "_recipient",
-            "type": "address"
-          },
-          {
-            "name": "_amount",
-            "type": "uint256"
-          }
-        ],
-        "name": "payOut",
-        "outputs": [
-          {
-            "name": "",
-            "type": "bool"
-          }
-        ],
-        "type": "function"
-      },
-      {
-        "constant": true,
         "inputs": [],
-        "name": "payOwnerOnly",
-        "outputs": [
-          {
-            "name": "",
-            "type": "bool"
-          }
-        ],
-        "type": "function"
-      },
-      {
-        "constant": true,
-        "inputs": [],
-        "name": "owner",
-        "outputs": [
-          {
-            "name": "",
-            "type": "address"
-          }
-        ],
-        "type": "function"
-      },
-      {
-        "constant": true,
-        "inputs": [],
-        "name": "accumulatedInput",
-        "outputs": [
-          {
-            "name": "",
-            "type": "uint256"
-          }
-        ],
+        "name": "empty",
+        "outputs": [],
         "type": "function"
       },
       {
         "inputs": [
           {
-            "name": "_owner",
+            "name": "_dao",
             "type": "address"
-          },
-          {
-            "name": "_payOwnerOnly",
-            "type": "bool"
           }
         ],
         "type": "constructor"
-      },
-      {
-        "anonymous": false,
-        "inputs": [
-          {
-            "indexed": true,
-            "name": "_recipient",
-            "type": "address"
-          },
-          {
-            "indexed": false,
-            "name": "_amount",
-            "type": "uint256"
-          }
-        ],
-        "name": "PayOut",
-        "type": "event"
       }
     ],
-    "unlinked_binary": "0x60606040818152806101be833960a090525160805160008054600160a060020a03191690921760a060020a60ff0219167401000000000000000000000000000000000000000090910217815561016490819061005a90396000f3606060405236156100405760e060020a60003504630221038a811461004d57806318bdc79a146100aa5780638da5cb5b146100be578063d2cc718f146100d0575b6100d96001805434019055565b6100db6004356024356000805433600160a060020a0390811691161415806100755750600034115b806100a05750805460a060020a900460ff1680156100a057508054600160a060020a03848116911614155b156100f957610002565b6100db60005460ff60a060020a9091041681565b6100ef600054600160a060020a031681565b6100ef60015481565b005b604080519115158252519081900360200190f35b6060908152602090f35b600160a060020a0383168260608381818185876185025a03f1925050501561015e57604080518381529051600160a060020a038516917f9735b0cb909f3d21d5c16bbcccd272d85fa11446f6d679f6ecb170d2dabfecfc919081900360200190a25060015b9291505056",
-    "updated_at": 1471499523851,
-    "links": {}
+    "unlinked_binary": "0x606060405260405160208061015583395060806040525160018054600160a060020a03199081163317909155600080549091168217905550610110806100456000396000f3606060405260e060020a6000350463f2a75fe4811461001b575b005b61001960015460009033600160a060020a0390811691161461003c5761010d565b80547f70a0823100000000000000000000000000000000000000000000000000000000606090815230600160a060020a0390811660645291909116906370a082319060849060209060248187876161da5a03f11561000257505060408051805184546001547fa9059cbb000000000000000000000000000000000000000000000000000000008452600160a060020a03908116600485015260248401839052935191959316935063a9059cbb926044808401936020939290839003909101908290876161da5a03f115610002575050505b5056",
+    "updated_at": 1471499523864
   }
 };
 
@@ -480,7 +408,7 @@ var Web3 = require("web3");
     Contract.links[name] = address;
   };
 
-  Contract.contract_name   = Contract.prototype.contract_name   = "ManagedAccount";
+  Contract.contract_name   = Contract.prototype.contract_name   = "Vault";
   Contract.generated_with  = Contract.prototype.generated_with  = "3.1.2";
 
   var properties = {
@@ -517,6 +445,6 @@ var Web3 = require("web3");
   } else {
     // There will only be one version of this contract in the browser,
     // and we can use that.
-    window.ManagedAccount = Contract;
+    window.Vault = Contract;
   }
 })();

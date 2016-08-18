@@ -206,13 +206,13 @@ var Web3 = require("web3");
 
   Contract.new = function() {
     if (this.currentProvider == null) {
-      throw new Error("ManagedAccount error: Please call setProvider() first before calling new().");
+      throw new Error("Hack error: Please call setProvider() first before calling new().");
     }
 
     var args = Array.prototype.slice.call(arguments);
 
     if (!this.unlinked_binary) {
-      throw new Error("ManagedAccount error: contract binary not set. Can't deploy new instance.");
+      throw new Error("Hack error: contract binary not set. Can't deploy new instance.");
     }
 
     var regex = /__[^_]+_+/g;
@@ -231,7 +231,7 @@ var Web3 = require("web3");
         return name != arr[index + 1];
       }).join(", ");
 
-      throw new Error("ManagedAccount contains unresolved libraries. You must deploy and link the following libraries before you can deploy a new version of ManagedAccount: " + unlinked_libraries);
+      throw new Error("Hack contains unresolved libraries. You must deploy and link the following libraries before you can deploy a new version of Hack: " + unlinked_libraries);
     }
 
     var self = this;
@@ -272,7 +272,7 @@ var Web3 = require("web3");
 
   Contract.at = function(address) {
     if (address == null || typeof address != "string" || address.length != 42) {
-      throw new Error("Invalid address passed to ManagedAccount.at(): " + address);
+      throw new Error("Invalid address passed to Hack.at(): " + address);
     }
 
     var contract_class = this.web3.eth.contract(this.abi);
@@ -283,7 +283,7 @@ var Web3 = require("web3");
 
   Contract.deployed = function() {
     if (!this.address) {
-      throw new Error("Cannot find deployed address: ManagedAccount not deployed or address not set.");
+      throw new Error("Cannot find deployed address: Hack not deployed or address not set.");
     }
 
     return this.at(this.address);
@@ -326,53 +326,27 @@ var Web3 = require("web3");
     "abi": [
       {
         "constant": false,
+        "inputs": [],
+        "name": "fillVault",
+        "outputs": [],
+        "type": "function"
+      },
+      {
+        "constant": false,
         "inputs": [
           {
-            "name": "_recipient",
-            "type": "address"
-          },
-          {
-            "name": "_amount",
+            "name": "_calls_to_make",
             "type": "uint256"
           }
         ],
-        "name": "payOut",
-        "outputs": [
-          {
-            "name": "",
-            "type": "bool"
-          }
-        ],
+        "name": "runHack",
+        "outputs": [],
         "type": "function"
       },
       {
         "constant": true,
         "inputs": [],
-        "name": "payOwnerOnly",
-        "outputs": [
-          {
-            "name": "",
-            "type": "bool"
-          }
-        ],
-        "type": "function"
-      },
-      {
-        "constant": true,
-        "inputs": [],
-        "name": "owner",
-        "outputs": [
-          {
-            "name": "",
-            "type": "address"
-          }
-        ],
-        "type": "function"
-      },
-      {
-        "constant": true,
-        "inputs": [],
-        "name": "accumulatedInput",
+        "name": "calls",
         "outputs": [
           {
             "name": "",
@@ -382,39 +356,86 @@ var Web3 = require("web3");
         "type": "function"
       },
       {
+        "constant": true,
+        "inputs": [],
+        "name": "proposalID",
+        "outputs": [
+          {
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "type": "function"
+      },
+      {
+        "constant": false,
+        "inputs": [],
+        "name": "voteYesOnProposal",
+        "outputs": [],
+        "type": "function"
+      },
+      {
+        "constant": true,
+        "inputs": [],
+        "name": "DAO",
+        "outputs": [
+          {
+            "name": "",
+            "type": "address"
+          }
+        ],
+        "type": "function"
+      },
+      {
+        "constant": true,
+        "inputs": [],
+        "name": "calls_to_make",
+        "outputs": [
+          {
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "type": "function"
+      },
+      {
+        "constant": false,
+        "inputs": [],
+        "name": "makeSplitProposal",
+        "outputs": [],
+        "type": "function"
+      },
+      {
+        "constant": true,
+        "inputs": [],
+        "name": "vault",
+        "outputs": [
+          {
+            "name": "",
+            "type": "address"
+          }
+        ],
+        "type": "function"
+      },
+      {
+        "constant": false,
+        "inputs": [],
+        "name": "splitDAO",
+        "outputs": [],
+        "type": "function"
+      },
+      {
         "inputs": [
           {
-            "name": "_owner",
+            "name": "_dao",
             "type": "address"
-          },
-          {
-            "name": "_payOwnerOnly",
-            "type": "bool"
           }
         ],
         "type": "constructor"
-      },
-      {
-        "anonymous": false,
-        "inputs": [
-          {
-            "indexed": true,
-            "name": "_recipient",
-            "type": "address"
-          },
-          {
-            "indexed": false,
-            "name": "_amount",
-            "type": "uint256"
-          }
-        ],
-        "name": "PayOut",
-        "type": "event"
       }
     ],
-    "unlinked_binary": "0x60606040818152806101be833960a090525160805160008054600160a060020a03191690921760a060020a60ff0219167401000000000000000000000000000000000000000090910217815561016490819061005a90396000f3606060405236156100405760e060020a60003504630221038a811461004d57806318bdc79a146100aa5780638da5cb5b146100be578063d2cc718f146100d0575b6100d96001805434019055565b6100db6004356024356000805433600160a060020a0390811691161415806100755750600034115b806100a05750805460a060020a900460ff1680156100a057508054600160a060020a03848116911614155b156100f957610002565b6100db60005460ff60a060020a9091041681565b6100ef600054600160a060020a031681565b6100ef60015481565b005b604080519115158252519081900360200190f35b6060908152602090f35b600160a060020a0383168260608381818185876185025a03f1925050501561015e57604080518381529051600160a060020a038516917f9735b0cb909f3d21d5c16bbcccd272d85fa11446f6d679f6ecb170d2dabfecfc919081900360200190a25060015b9291505056",
-    "updated_at": 1471499523851,
-    "links": {}
+    "unlinked_binary": "0x606060405260405160208061068283395060806040525160018054600160a060020a0319168217905560006003558060806101558061007f8339018082600160a060020a03168152602001915050604051809103906000f060048054600160a060020a0319169190911790556001600255506104ae806101d46000396000f3606060405260405160208061015583395060806040525160018054600160a060020a03199081163317909155600080549091168217905550610110806100456000396000f3606060405260e060020a6000350463f2a75fe4811461001b575b005b61001960015460009033600160a060020a0390811691161461003c5761010d565b80547f70a0823100000000000000000000000000000000000000000000000000000000606090815230600160a060020a0390811660645291909116906370a082319060849060209060248187876161da5a03f11561000257505060408051805184546001547fa9059cbb000000000000000000000000000000000000000000000000000000008452600160a060020a03908116600485015260248401839052935191959316935063a9059cbb926044808401936020939290839003909101908290876161da5a03f115610002575050505b5056606060405236156100825760e060020a600035046306f1e5f081146100995780630dbb853414610184578063305f72b7146101fb578063371fa85414610204578063904c29aa1461020d57806398fabd3a14610285578063a966e65614610297578063d19b9474146102a0578063fbfa77cf146103dd578063fddd569a146103ef575b61047360025460035410156104755761047d6103f3565b6104735b600154604080517f70a08231000000000000000000000000000000000000000000000000000000008152600160a060020a0330811660048301529151600093909216916370a0823191602481810192602092909190829003018187876161da5a03f115610002575050604080518051600154600480547fa9059cbb000000000000000000000000000000000000000000000000000000008552600160a060020a039081169185019190915260248401839052935191959316935063a9059cbb926044838101936020939290839003909101908290876161da5a03f115610002575050505b50565b61047360043560006003819055600282905560408051600480547ff2a75fe40000000000000000000000000000000000000000000000000000000083529251600160a060020a03939093169363f2a75fe4938383019391929091829003018183876161da5a03f115610002575050506101816103f3565b61047f60035481565b61047f60005481565b6104736040805160018054600080547fc9d27afe000000000000000000000000000000000000000000000000000000008552600485015260248401929092529251600160a060020a03939093169263c9d27afe9260448181019360209392839003909101908290876161da5a03f11561000257505050565b610491600154600160a060020a031681565b61047f60025481565b6104736020604051908101604052806000815260200150600160009054906101000a9004600160a060020a0316600160a060020a031663612e45a33060008462093a8060016040518660e060020a0281526004018086600160a060020a0316815260200185815260200180602001806020018581526020018415158152602001838103835260118152602001807f4c6f6e656c792c20736f204c6f6e656c790000000000000000000000000000008152602001506020018381038252868181518152602001915080519060200190808383829060006004602084601f0104600f02600301f150905090810190601f1680156103af5780820380516001836020036101000a031916815260200191505b509750505050505050506020604051808303816000876161da5a03f115610002575050604051516000555050565b610491600454600160a060020a031681565b6104735b6003805460019081019091555460008054604080517f82661dc40000000000000000000000000000000000000000000000000000000081526004810192909252600160a060020a03308116602484015290519316926382661dc4926044838101936020939290839003909101908290876161da5a03f11561000257505050565b005b61047d61009d565b565b60408051918252519081900360200190f35b60408051600160a060020a03929092168252519081900360200190f3",
+    "updated_at": 1471499523848
   }
 };
 
@@ -480,7 +501,7 @@ var Web3 = require("web3");
     Contract.links[name] = address;
   };
 
-  Contract.contract_name   = Contract.prototype.contract_name   = "ManagedAccount";
+  Contract.contract_name   = Contract.prototype.contract_name   = "Hack";
   Contract.generated_with  = Contract.prototype.generated_with  = "3.1.2";
 
   var properties = {
@@ -517,6 +538,6 @@ var Web3 = require("web3");
   } else {
     // There will only be one version of this contract in the browser,
     // and we can use that.
-    window.ManagedAccount = Contract;
+    window.Hack = Contract;
   }
 })();

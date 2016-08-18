@@ -17,6 +17,7 @@ along with the DAO.  If not, see <http://www.gnu.org/licenses/>.
 
 import "ManagedAccount.sol";
 import "DAO_CreatorInterface.sol";
+import "TokenInterface.sol";
 import "TokenCreationInterface.sol";
 
 /*
@@ -25,7 +26,7 @@ to automate organizational governance and decision-making.
 */
 
 
-contract DAOInterface is TokenCreationInterface {
+contract DAOInterface is TokenInterface, TokenCreationInterface {
 
     // The amount of days for which people who try to participate in the
     // creation by calling the fallback function will still get their ether back
