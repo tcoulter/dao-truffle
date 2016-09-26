@@ -9,14 +9,12 @@ var align = require("./aligner.js");
 var DAOContract = require("./build/contracts/DAO.sol.js");
 var HackContract = require("./build/contracts/Hack.sol.js");
 
-console.log("Forking from block 1599207...");
+var block = 1599200;
+
+console.log("Forking from block " + block + "...");
 
 var web3 = new Web3(TestRPC.provider({
-  fallback: "http://localhost:8545",
-  fallback_block_number: 1599207,
-  // DAO closing time: 1464426000 (resolution in seconds)
-  startTime: new Date('Sat May 28 2016 00:00:00 GMT-0700'),
-  seed: "asdf", // Make TestRPC deterministic
+  fork: "http://localhost:8545@" + block
   //verbose: true,
   //logger: console
 }));
@@ -106,6 +104,7 @@ web3.eth.getAccounts(function(err, accounts) {
   }
 
   function transferDAOToHackContract(callback) {
+    console.log("Transferring DAO to Hack contract...");
     DAO.transfer(Hack.address, balances.accountDAO).then(function() {
       callback();
     }).catch(callback);
