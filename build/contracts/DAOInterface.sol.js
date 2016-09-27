@@ -1,4 +1,5 @@
 var Web3 = require("web3");
+var SolidityEvent = require("web3/lib/web3/event.js");
 
 (function() {
   // Planned for future features, logging, etc.
@@ -76,7 +77,7 @@ var Web3 = require("web3");
         });
       };
     },
-    synchronizeFunction: function(fn, C) {
+    synchronizeFunction: function(fn, instance, C) {
       var self = this;
       return function() {
         var args = Array.prototype.slice.call(arguments);
@@ -92,6 +93,21 @@ var Web3 = require("web3");
 
         return new Promise(function(accept, reject) {
 
+          var decodeLogs = function(logs) {
+            return logs.map(function(log) {
+              var logABI = C.events[log.topics[0]];
+
+              if (logABI == null) {
+                return null;
+              }
+
+              var decoder = new SolidityEvent(null, logABI, instance.address);
+              return decoder.decode(log);
+            }).filter(function(log) {
+              return log != null;
+            });
+          };
+
           var callback = function(error, tx) {
             if (error != null) {
               reject(error);
@@ -106,7 +122,16 @@ var Web3 = require("web3");
                 if (err) return reject(err);
 
                 if (receipt != null) {
-                  return accept(tx, receipt);
+                  // If they've opted into next gen, return more information.
+                  if (C.next_gen == true) {
+                    return accept({
+                      tx: tx,
+                      receipt: receipt,
+                      logs: decodeLogs(receipt.logs)
+                    });
+                  } else {
+                    return accept(tx);
+                  }
                 }
 
                 if (timeout > 0 && new Date().getTime() - start > timeout) {
@@ -138,7 +163,7 @@ var Web3 = require("web3");
         if (item.constant == true) {
           instance[item.name] = Utils.promisifyFunction(contract[item.name], constructor);
         } else {
-          instance[item.name] = Utils.synchronizeFunction(contract[item.name], constructor);
+          instance[item.name] = Utils.synchronizeFunction(contract[item.name], instance, constructor);
         }
 
         instance[item.name].call = Utils.promisifyFunction(contract[item.name].call, constructor);
@@ -1289,8 +1314,205 @@ var Web3 = require("web3");
         "type": "event"
       }
     ],
-    "updated_at": 1471534350192,
-    "links": {}
+    "updated_at": 1474998354991,
+    "links": {},
+    "events": {
+      "0x5790de2c279e58269b93b12828f56fd5f2bc8ad15e61ce08572585c81a38756f": {
+        "anonymous": false,
+        "inputs": [
+          {
+            "indexed": true,
+            "name": "proposalID",
+            "type": "uint256"
+          },
+          {
+            "indexed": false,
+            "name": "recipient",
+            "type": "address"
+          },
+          {
+            "indexed": false,
+            "name": "amount",
+            "type": "uint256"
+          },
+          {
+            "indexed": false,
+            "name": "newCurator",
+            "type": "bool"
+          },
+          {
+            "indexed": false,
+            "name": "description",
+            "type": "string"
+          }
+        ],
+        "name": "ProposalAdded",
+        "type": "event"
+      },
+      "0x86abfce99b7dd908bec0169288797f85049ec73cbe046ed9de818fab3a497ae0": {
+        "anonymous": false,
+        "inputs": [
+          {
+            "indexed": true,
+            "name": "proposalID",
+            "type": "uint256"
+          },
+          {
+            "indexed": false,
+            "name": "position",
+            "type": "bool"
+          },
+          {
+            "indexed": true,
+            "name": "voter",
+            "type": "address"
+          }
+        ],
+        "name": "Voted",
+        "type": "event"
+      },
+      "0xdfc78bdca8e3e0b18c16c5c99323c6cb9eb5e00afde190b4e7273f5158702b07": {
+        "anonymous": false,
+        "inputs": [
+          {
+            "indexed": true,
+            "name": "proposalID",
+            "type": "uint256"
+          },
+          {
+            "indexed": false,
+            "name": "result",
+            "type": "bool"
+          },
+          {
+            "indexed": false,
+            "name": "quorum",
+            "type": "uint256"
+          }
+        ],
+        "name": "ProposalTallied",
+        "type": "event"
+      },
+      "0x9046fefd66f538ab35263248a44217dcb70e2eb2cd136629e141b8b8f9f03b60": {
+        "anonymous": false,
+        "inputs": [
+          {
+            "indexed": true,
+            "name": "_newCurator",
+            "type": "address"
+          }
+        ],
+        "name": "NewCurator",
+        "type": "event"
+      },
+      "0x73ad2a153c8b67991df9459024950b318a609782cee8c7eeda47b905f9baa91f": {
+        "anonymous": false,
+        "inputs": [
+          {
+            "indexed": true,
+            "name": "_recipient",
+            "type": "address"
+          },
+          {
+            "indexed": false,
+            "name": "_allowed",
+            "type": "bool"
+          }
+        ],
+        "name": "AllowedRecipientChanged",
+        "type": "event"
+      },
+      "0xf381a3e2428fdda36615919e8d9c35878d9eb0cf85ac6edf575088e80e4c147e": {
+        "anonymous": false,
+        "inputs": [
+          {
+            "indexed": false,
+            "name": "value",
+            "type": "uint256"
+          }
+        ],
+        "name": "FuelingToDate",
+        "type": "event"
+      },
+      "0xdbccb92686efceafb9bb7e0394df7f58f71b954061b81afb57109bf247d3d75a": {
+        "anonymous": false,
+        "inputs": [
+          {
+            "indexed": true,
+            "name": "to",
+            "type": "address"
+          },
+          {
+            "indexed": false,
+            "name": "amount",
+            "type": "uint256"
+          }
+        ],
+        "name": "CreatedToken",
+        "type": "event"
+      },
+      "0xbb28353e4598c3b9199101a66e0989549b659a59a54d2c27fbb183f1932c8e6d": {
+        "anonymous": false,
+        "inputs": [
+          {
+            "indexed": true,
+            "name": "to",
+            "type": "address"
+          },
+          {
+            "indexed": false,
+            "name": "value",
+            "type": "uint256"
+          }
+        ],
+        "name": "Refund",
+        "type": "event"
+      },
+      "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef": {
+        "anonymous": false,
+        "inputs": [
+          {
+            "indexed": true,
+            "name": "_from",
+            "type": "address"
+          },
+          {
+            "indexed": true,
+            "name": "_to",
+            "type": "address"
+          },
+          {
+            "indexed": false,
+            "name": "_amount",
+            "type": "uint256"
+          }
+        ],
+        "name": "Transfer",
+        "type": "event"
+      },
+      "0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925": {
+        "anonymous": false,
+        "inputs": [
+          {
+            "indexed": true,
+            "name": "_owner",
+            "type": "address"
+          },
+          {
+            "indexed": true,
+            "name": "_spender",
+            "type": "address"
+          },
+          {
+            "indexed": false,
+            "name": "_amount",
+            "type": "uint256"
+          }
+        ],
+        "name": "Approval",
+        "type": "event"
+      }
+    }
   }
 };
 
@@ -1336,6 +1558,7 @@ var Web3 = require("web3");
     this.address         = this.prototype.address         = network.address;
     this.updated_at      = this.prototype.updated_at      = network.updated_at;
     this.links           = this.prototype.links           = network.links || {};
+    this.events          = this.prototype.events          = network.events || {};
 
     this.network_id = network_id;
   };
@@ -1345,10 +1568,28 @@ var Web3 = require("web3");
   };
 
   Contract.link = function(name, address) {
+    if (typeof name == "function") {
+      var contract = name;
+
+      if (contract.address == null) {
+        throw new Error("Cannot link contract without an address.");
+      }
+
+      Contract.link(contract.contract_name, contract.address);
+
+      // Merge events so this contract knows about library's events
+      Object.keys(contract.events).forEach(function(topic) {
+        Contract.events[topic] = contract.events[topic];
+      });
+
+      return;
+    }
+
     if (typeof name == "object") {
-      Object.keys(name).forEach(function(n) {
-        var a = name[n];
-        Contract.link(n, a);
+      var obj = name;
+      Object.keys(obj).forEach(function(name) {
+        var a = obj[name];
+        Contract.link(name, a);
       });
       return;
     }
@@ -1357,7 +1598,10 @@ var Web3 = require("web3");
   };
 
   Contract.contract_name   = Contract.prototype.contract_name   = "DAOInterface";
-  Contract.generated_with  = Contract.prototype.generated_with  = "3.1.2";
+  Contract.generated_with  = Contract.prototype.generated_with  = "3.2.0";
+
+  // Allow people to opt-in to breaking changes now.
+  Contract.next_gen = false;
 
   var properties = {
     binary: function() {

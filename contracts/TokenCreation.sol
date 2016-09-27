@@ -1,7 +1,7 @@
 import "TokenCreationInterface.sol";
 import "Token.sol";
 
-contract TokenCreation is TokenCreationInterface, Token {
+contract TokenCreation is Token, TokenCreationInterface  {
     function TokenCreation(
         uint _minTokensToCreate,
         uint _closingTime,
@@ -18,7 +18,7 @@ contract TokenCreation is TokenCreationInterface, Token {
             && (privateCreation == 0 || privateCreation == msg.sender)) {
 
             uint token = (msg.value * 20) / divisor();
-            extraBalance.call.value(msg.value - token)();
+            bool result = extraBalance.call.value(msg.value - token)();
             balances[_tokenHolder] += token;
             totalSupply += token;
             weiGiven[_tokenHolder] += msg.value;

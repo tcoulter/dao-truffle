@@ -23,7 +23,7 @@ import "DAO_CreatorInterface.sol";
 
 
 // The DAO contract itself
-contract DAO is DAOInterface, Token, TokenCreation {
+contract DAO is DAOInterface, TokenCreation {
 
     // Modifier that allows only shareholders to vote and create new proposals
     modifier onlyTokenholders {
@@ -212,7 +212,7 @@ contract DAO is DAOInterface, Token, TokenCreation {
         // in order to free the deposit and allow unblocking of voters
         if (!isRecipientAllowed(p.recipient)) {
             closeProposal(_proposalID);
-            p.creator.send(p.proposalDeposit);
+            bool result = p.creator.send(p.proposalDeposit);
             return;
         }
 
